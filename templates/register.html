@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #avatar {
+            display: none;
+        }
+
+        #avatar_img {
+            margin-left: 20px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
+    <title>register</title>
+</head>
+
+<body>
+    <h3>注册页面</h3>
+    <div class="container">
+        <div class="col-md-6 col-lg-offset-3">
+
+            <form>
+                {% csrf_token %}
+                {% for filed in form %}
+
+                <div class="form-group">
+                    <!-- auto_id是自动填写每一个id值 -->
+                    <label for="{{filed.auto_id}}">{{filed.label}}</label>
+                    {{filed}}
+                    <span class="error pull-right"></span>
+                </div>
+
+                {% endfor %}
+                <!-- 博客名称 -->
+                <div class="form-group">
+                    <label for="blog_name">博客名称</label>
+                    <input type="text" id="blog_name" name="blog_name" class="form-control">
+                </div>
+
+                <!-- 头像 -->
+                <div class="form-group">
+                    <label for="avatar">
+                        头像
+                        <img id="avatar_img" width="60" height="60" src="/static/blog/img/default.jpg" alt="">
+                    </label>
+                    <input id="avatar" type="file">
+                </div>
+
+                <input href="" type="button" value="确认注册" class="btn btn-default pull-right reg_btn">
+
+            </form>
+        </div>
+    </div>
+
+    <script src="\static\js\jquery-3.2.1.min.js"></script>
+
+    <script>
+        // 捕捉id=avatar的元素的内容改变的动作
+        $("#avatar").change(function () {
+            // 获取用户选中的文件对象
+            var file_obj = $(this)[0].files[0];
+            // 获取文件对象的路径，文件路径保存到了reader.result中
+            var reader = new FileReader();
+            reader.readAsDataURL(file_obj);
+            // 修改id = avatar_img元素的src属性
+            // 等待reader读完再执行修改元素的函数
+            reader.onload = function () {
+                $("#avatar_img").attr("src", reader.result);
+            }
+        })
+
+        // 基于Ajax提交数据
+        $(".reg_btn").click(function () {
+            var formdata = new FormData();
+            formdata.append("user", $("#id_user").val());
+            formdata.append("pwd", $("#id_pwd").val());
+            formdata.append("re_pwd", $("#id_re_pwd").val());
+            formdata.append("email", $("#id_email").val());
+            formdata.append("blog_name", $("#blog_name").val());
+            formdata.append("csrfmiddlewaretoken", '{{csrf_token}}');
+            formdata.append("avatar", $("#avatar")[0].files[0]);
+
+            $.ajax({
+                url: "",
+                type: "post",
+                // 发送FormData对象必须加上的两行命令
+                contentType: false,
+                // 序列化data的内容
+                processData: false,
+                // 构建form-code的对象
+                data: formdata,
+                success: function (data) {
+                    if (data.user) {
+                        // 注册成功时
+                        location.href = '/login/'
+                    }
+                    else {
+                        // 注册失败时
+                        // 循环打印错误信息
+                        $(".error").html("");
+                        $(".error").parent().removeClass("has-error");
+                        $.each(data.msg, function (filed, error_list) {
+                            if (filed == "__all__") {
+                                $("#id_re_pwd").next().html(error_list[0]).parent().addClass("has-error");
+                            }
+                            $("#id_" + filed).next().html(error_list[0]);
+                            $("#id_" + filed).parent().addClass("has-error");
+                        })
+                    }
+                }
+            })
+        })
+    </script>
+
+</body>
+
+</html>

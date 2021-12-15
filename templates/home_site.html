@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .article_info {
+        margin-left: 15px;
+    }
+    
+    /* 选择器CSS */
+    #pagination_bar {
+        text-align: center;
+    }
+</style>
+
+    {% for article in current_page %}
+    <div class="panel panel-default">
+        <!-- 标题 -->
+        <div class="panel-heading">
+            <a href="/{{article.user}}/articles/{{article.nid}}" class="article_title">{{article.title}}</a>
+        </div>
+        <!-- 内容 -->
+        <div class="panel-body article-desc">
+            <span class="simple_content">
+                {{article.desc}}
+            </span>
+        </div>
+        <!-- 文章信息 -->
+        <div class="article_info">
+            <span style="margin-right: 20px;">
+                <a href="/{{article.user.username}}">{{article.user.username}}</a>
+            </span>
+            <span style="margin-right: 20px;">
+                发布于：{{article.create_time|date:"Y-m-d H:i"}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-comment"></span>
+                {{article.comment_count}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                {{article.up_count}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+                {{article.down_count}}
+            </span>
+            <span style="margin-right: 20px;">
+                <span class="glyphicon glyphicon-eye-open"></span>
+                {{article.pageview.pageview_count}}
+              </span>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- 下面是分页器功能 -->
+    {% include "paginator.html" %}
+
+{% endblock %}

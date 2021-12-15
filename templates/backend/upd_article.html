@@ -1,0 +1,58 @@
+{% extends 'backend/base.html' %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/upd_article.css">
+<script charset="utf-8" src="/static/kindeditor/kindeditor-all-min.js"></script>
+
+
+<form method="post">
+    {% csrf_token %}
+    <div class="alert-success text-center" style="margin-top: 20px;">添加文章</div>
+    <div class="add_article_area">
+        <!-- 标题 -->
+        <div class="title form-group">
+            <label for="">标题</label>
+            <input name="title" type="text" class="article_title" value="{{title}}">
+        </div>
+        <!-- 所属分类 -->
+        <div>
+            <label for="">所属分类</label>
+            <select name="category_id" id="category_id">
+                {% for category in category_list %}
+                {% if category.nid is active_category_id %}
+                <option value="{{category.nid}}" selected="selected">{{category.title}}</option>
+                {% else %}
+                <option value="{{category.nid}}">{{category.title}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <!-- <div id="add_category"class="glyphicon glyphicon-plus" title="添加分类"></div> -->
+        </div>
+        <!-- 内容 -->
+        <div class="content form-group">
+            <label for="">内容</label>
+            <textarea name="content" id="article_content" cols="95" rows="40">{{content}}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" id="submit_btn" class="btn btn-success" value="提交">
+    </div>
+
+</form>
+
+<script>
+    KindEditor.ready(function(K) {
+            window.editor = K.create('#article_content', {
+                uploadJson: "/upload/",
+                extraFileUploadParams: {
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                },
+                filePostName: "upload_img",
+            });
+    });
+</script>
+
+{% endblock %}

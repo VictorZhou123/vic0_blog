@@ -1,0 +1,44 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+
+<style>
+    .articles {
+        margin-top: 20px;
+    }
+    /* 分页器CSS */
+    #pagination_bar {
+      text-align: center;
+    }
+</style>
+
+<div class="articles">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>所属分类</th>
+                <th>评论数</th>
+                <th>点赞数</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in current_page %}
+            <tr>
+                <th><a href="/{{user.username}}/articles/{{article.nid}}">{{article.title}}</a></th>
+                <th><a href="/{{user.username}}/backend/add_category/">{{article.category}}</a></th>
+                <th>{{article.comment_count}}</th>
+                <th>{{article.up_count}}</th>
+                <th><a href="/{{user.username}}/backend/upd_article/{{article.nid}}">编辑</a></th>
+                <th><a href="/{{user.username}}/backend/del_article/{{article.nid}}">删除</a></th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 下面是分页器功能 -->
+{% include "paginator.html" %}
+
+
+{% endblock %}

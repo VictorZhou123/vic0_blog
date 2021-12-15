@@ -1,0 +1,83 @@
+{% extends 'backend/base.html' %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/add_article.css">
+<script charset="utf-8" src="/static/kindeditor/kindeditor-all-min.js"></script>
+
+
+<form method="post">
+    {% csrf_token %}
+    <div class="alert-success text-center" style="margin-top: 20px;">添加文章</div>
+    <div class="add_article_area">
+        <div class="title form-group">
+            <!-- 标题 -->
+            <label for="title">标题</label>
+            <input name="title" id="title" type="text" class="article_title">
+        </div>
+        <!-- 所属分类 -->
+        <div class="form-group">
+            <label for="category_id">所属分类</label>
+            <select name="category_id" id="category_id">
+                {% for category in category_list %}
+                <option value="{{category.nid}}">{{category.title}}</option>
+                {% endfor %}
+            </select>
+            <!-- <div id="add_category"class="glyphicon glyphicon-plus" title="添加分类"></div> -->
+        </div>
+        <div class="content form-group">
+            <label for="article_content">内容</label>
+            <textarea name="content" id="article_content" cols="95" rows="40"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-success" id="submit_btn" value="发布">
+    </div>
+</form>
+
+<script>
+    KindEditor.ready(function(K) {
+            window.editor = K.create('#article_content', {
+                uploadJson: "/upload/",
+                extraFileUploadParams: {
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                },
+                filePostName: "upload_img",
+            });
+    });
+
+    // 添加分类
+    // $("#add_category").click(function () {
+    //     const s = `
+    //         <div>
+    //         <input class="new_category"></input>
+    //         <a class="new_category_btn glyphicon glyphicon-ok"></a>
+    //         </div>
+    //     `;
+    //     $(this).parent().append(s)
+    // })
+
+    // 确认按钮事件
+    // $("[class='new_category_btn']").on("click", function () {
+    //     const new_category = $(".new_category").val();
+    //     console.log(new_category)
+    //     alert("123")
+    //     $.ajax({
+    //         url:"/add_category/",
+    //         data: new_category,
+    //         success: function (my_category) {
+    //             var s = `
+    //                 <option value="${my_category.nid}">${my_category.title}</option>
+    //             `;
+    //             $("[name='category_id']").append(s);
+    //         }
+    //     })
+    // })
+
+
+</script>
+
+
+
+{% endblock %}
